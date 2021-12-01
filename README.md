@@ -22,19 +22,23 @@ The file at location specified by `path_to_file_with_solver` has the rough form
 import pyamg
 <other imports>
 
-def solver(A,b,<set desired optional argument>):
-    #function name can be nearly arbitrary
-    <construct your own solver using pyamg and arbitrary Python>
+<other helper functions>
+
+def solver(A,b):
+    #must have function with this name and input/output
+    #INPUTS: A: matrix, b: vector
+    #OUTPUTS: x: vector
+    <custom solver using pyamg and arbitrary Python>
     return x
 ```
 
 with a few **critical notes**:
 
 - full command names should be used, for example `pyamg.aggregation.smoothed_aggregation_solver`
-- all specified optional arguments will be considered fixed, conversely, (nearly) all unspecified optinal arguments will be optimized over
 - currently, `mgtune` can only optimize certain functions within PyAMG (since support for functions must be added manually) 
-- all of this happens by parsing the solver file at `path_to_file_with_solver`, and injecting different optional parameters during optimization, so try to keep syntax in this file simple for the best results
-- the parameters which are not optimized (candidate vectors, for example) are omitted because their parameter space is too large, or the parser/writer implementation would be extremely complex; thankfully these cases are rather rare
+- all specified optional arguments to such functions will be considered fixed, conversely, (nearly) all unspecified optinal arguments will be optimized over
+- the parameters which are not optimized (candidate vectors, for example) are omitted because their parameter space is too large, or the parser/writer implementation would be extremely complex (thankfully these cases are rather rare)
+- all of this happens by parsing the solver file at `path_to_file_with_solver`, and injecting different optional parameters during optimization, so try to keep syntax in this file simple for the best results (ultimately, this should be done by acessing the abstract syntax tree of the user's custom solver functions)
 
 
 ### Dependencies
