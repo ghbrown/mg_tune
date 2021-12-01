@@ -33,6 +33,8 @@ def tune(user_solver_file,A_list,b_list):
                 function_key = key + '_set' #name of method to set value of key
                 wfdl[i_f][key]=function_dict[function_key](A_list,b_list)
     """
+    #wfdl = function_info.function_dict_list() #[w]orking [f]unction [d]ictionary [l]ist
+    #print(wfdl)
 
     """
     things to be done:

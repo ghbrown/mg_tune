@@ -17,11 +17,11 @@ License-File: LICENSE
 
 
 
-##`mg_tune`
+## `mg_tune`
 
-a multigrid method parameter autotuner using black box optimization
+a parameter autotuner for multigrid methods using black box optimization
 
-designed specifically for [PyAMG](https://pyamg.readthedocs.io/en/latest/)
+designed specifically to interface with [PyAMG](https://pyamg.readthedocs.io/en/latest/)
 
 
 ### Dependencies
