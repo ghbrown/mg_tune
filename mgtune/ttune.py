@@ -22,6 +22,9 @@ def tune(user_solver_file,A_list,b_list):
         list of matrices whose solution is desired
     b_list : {list}
         corresponding list of right hand sides for linear systems
+    ---Outputs---
+    optimal_solver_file_path : {path}
+        path to an optimized version of solver at location user_solver_file 
     """
 
     """ CURRENTLY UNUSED

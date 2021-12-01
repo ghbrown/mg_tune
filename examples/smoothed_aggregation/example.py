@@ -12,7 +12,7 @@ b_list = [b]
 
 solver_file = "sa_solver.py" #location of solver function file
 
-what_will_the_output_look_like = mgtune.tune("sa_solver.py",A_list,b_list)
+path_to_optimal_solver_file = mgtune.tune("sa_solver.py",A_list,b_list)
 """
 
 import numpy as np
