@@ -43,7 +43,7 @@ with a few **critical notes**:
 
 ### Dependencies
 
-Python + `numpy` + `pyamg`
+`python3` + `numpy` + `pyamg`
 
 [NOMAD: a blackbox optimization software](https://nomad-4-user-guide.readthedocs.io/en/latest/)
 
