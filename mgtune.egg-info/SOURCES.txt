@@ -4,12 +4,12 @@ Makefile
 README.md
 setup.py
 bin/mgtune
-examples/sa_solver.py
 examples/smoothed_aggregation/example.py
 examples/smoothed_aggregation/sa_solver.py
 mgtune/__init__.py
 mgtune/function_info.py
 mgtune/outline.py
+mgtune/parsing.py
 mgtune/ttune.py
 mgtune.egg-info/PKG-INFO
 mgtune.egg-info/SOURCES.txt
