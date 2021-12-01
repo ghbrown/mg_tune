@@ -1,6 +1,6 @@
 
 
-##`mg_tune`
+## `mg_tune`
 
 a multigrid method parameter autotuner using black box optimization
 
