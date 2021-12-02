@@ -2,16 +2,17 @@
 from pathlib import Path
 import numpy as np
 #import pyamg    #PROBLEM, PYAMG IS BROKEN INSIDE VENV
+
 import mgtune
 from mgtune import parsing
 from mgtune import function_info
 
 cur_dir = str(Path(__file__).parent)
 solver_path = cur_dir + '/sa_solver.py'
-marked_path = cur_dir + '/sa_solver_marked.py'
+tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
 
 fdl = mgtune.function_info.function_dict_list()
-mgtune.parsing.mark_functions(solver_path,marked_path,fdl)
+mgtune.parsing.tag_file(solver_path,tagged_solver_path,fdl)
 
 n = 100
 A = np.random.rand(n,n)

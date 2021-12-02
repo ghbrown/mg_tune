@@ -45,7 +45,6 @@ sa_dict = {
     "presmoother" : ['???'], #actually no idea what the options are
     "postsmoother" : ['???'], #actually no idea what the options are
     "improve_candidates" : 'untunable',
-    "not_tuned" : ['improve_candidates','keep']
     "max_coarse" : [33,25,20,17,13,9,5,3], #having as actual integer would be disaster
     #perhaps change from these values to range(2,51) if speed allows
     "max_levels" : 'unbounded_int',

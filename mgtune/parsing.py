@@ -1,5 +1,6 @@
 
 import os
+import re
 import copy
 
     
@@ -40,13 +41,15 @@ def is_viable_line(string):
         return True
     
 
-def mark_functions(file_name,marked_file_name,fdl):
+def tag_file(file_name,tagged_file_name,fdl):
     """
-    finds and marks location of functions which may be edited
+    finds and inserts all unused options of tunable parameters
+    with value set to tag of form "mgtune_tag_*" in file at
+    file_name
     ---Inputs---
     file_name : {string or path}
         path to source file possibly containing calls to optimized functions
-    marked_file_name : {string or path}
+    tagged_file_name : {string or path}
         path to copy of source file with marks inserted
     fdl : {list}
         function dictionary list, a list of dictionaries, each of which
@@ -57,7 +60,7 @@ def mark_functions(file_name,marked_file_name,fdl):
     with open(file_name,'r') as f:
         lines = f.readlines()
 
-    num_parameter_tags = 0 #number of parameter tags which have been placed
+    cur_tag_num = 0 #number of parameter tags which have been placed
     parameter_options_list = [] #one parameter option for each tag placed
     #loop over all lines to see if they contain known functions
     for i_l,line in enumerate(lines): 
@@ -71,19 +74,26 @@ def mark_functions(file_name,marked_file_name,fdl):
                 pre_call = line[:start_call]
                 post_call = line[end_call+1:]
                 call_string = line[start_call:end_call+1] #of form fun(.....)
-                mark_text = 'mg_tune_function_mark' + str(num_functions_found)
-                lines[i_l] = pre_call + post_call
-                find_free_parameters(call_string,function_dict)
+                tagged_call_string,call_parameter_options_list = tag_call(call_string,
+                                                                          function_dict,
+                                                                          cur_tag_num)
+                parameter_options_list += call_parameter_options_list
+                lines[i_l] = pre_call + tagged_call_string + post_call #overwrite line with
+                #function call with tagged version of the functionc call
+                num_tags_added = len(call_parameter_options_list)
+                cur_tag_num += num_tags_added
+                #TODO: result of above  should be added to parameter_options_list +=
+                #TODO: don't forget to use length of above output to increment num_parameter_tags
     #TODO: may as well take advantage of having index of fuction start plus index of
     #its closing parentheses to insert mark for each function
 
-    with open(marked_file_name,'w') as f:
+    with open(tagged_file_name,'w') as f:
         f.writelines(lines)
         
 
-def insert_parameter_tags(string,fd,first_tag_num):
+def tag_call(string,fd,first_tag_num):
     """
-    given a string 'fun(a,b,c=20)'
+    given a string 'fun(a,b,c=20)' corresponding to a single function call
     return all (name, optional arguments) pairs of fun which have not been
     set using knowledge of all optional present in the function
     dictionary fd
@@ -99,27 +109,37 @@ def insert_parameter_tags(string,fd,first_tag_num):
     first_tag_num : {integer}
         number to assign to first tag placed in string
     ---Outputs---
+    tagged_string : {string}
+        input string with unused optional argument names and tags inserted
     parameter_options : {lists}
         len(parameter_options) = number of free parameters in function call
             given by string
         len(parameter_options[i]) = 2
         parameter_options[i] = [ith argument name, ith argument options (or keywords)]
     """
-    string_no_newline_spaces = ''.join(string.strip().split())
-
+    string_no_close_paren = string[:-1] #lop off closing parentheses
     parameter_options = [] #items to be appended
     cur_tag = first_tag_num
+    tagged_string = string_no_close_paren #copy to be edited
+
     #loop over every possible optional argument
-    for key, item in fdl.items():
-        if (isinstance(item,string)):
+    for key, item in fd.items():
+        if (isinstance(item,str)):
             if (item == 'untunable'):
                 #don't search if argument is untunable
                 pass
         else: #search in string for instance of optional argument key
-            if ((key+'=') not in string_no_newline_spaces):
-                #optional_argument_name= is not inside of function call string
+            option_pattern = re.compile(key + ' *=') #key, any number of spaces, then =
+            m = re.match(option_pattern,string) #None if no matches
+            if (m is None): 
+                #optional_argument_name *= is not inside of function call string
+                #means that it should be set
                 parameter_options.append([key,item])
-    return parameter_options
+                tagged_string += f', {key}=mgtune_tag_{cur_tag}'
+                cur_tag += 1
+
+    tagged_string = tagged_string + ')' #add back closing parentheses
+    return (tagged_string, parameter_options)
                 
 
              
