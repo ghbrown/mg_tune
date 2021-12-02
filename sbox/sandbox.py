@@ -7,12 +7,12 @@ import mgtune
 from mgtune import parsing
 from mgtune import function_info
 
-cur_dir = str(Path(__file__).parent)
-solver_path = cur_dir + '/sa_solver.py'
-tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
 
+"""
 fdl = mgtune.function_info.function_dict_list()
 mgtune.parsing.tag_file(solver_path,tagged_solver_path,fdl)
+"""
+
 
 n = 100
 A = np.random.rand(n,n)
@@ -22,7 +22,14 @@ b = np.ones((A.shape[0]))                        # right hand side
 A_list = [A]    #put tuning/training set in mgtune's expected form
 b_list = [b]
 
-solver_file = 'sa_solver.py'   #location of solver function file
 
-#mgtune.tune("sa_solver.py",A_list,b_list)
+#build relative path from full path (only since running make from different directory)
+cur_dir = str(Path(__file__).parent)
+solver_path = cur_dir + '/sa_solver.py'
+tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
+
+
+mgtune.tune(solver_path,A_list,b_list)
+
+
 

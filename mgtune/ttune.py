@@ -1,6 +1,8 @@
 
+import os
 import numpy as np
 from . import function_info
+from . import parsing
 
 
 def tune(user_solver_file,A_list,b_list):
@@ -23,32 +25,30 @@ def tune(user_solver_file,A_list,b_list):
     b_list : {list}
         corresponding list of right hand sides for linear systems
     ---Outputs---
-    optimal_solver_file_path : {path}
+    optimal_solver_file : {path}
         path to an optimized version of solver at location user_solver_file 
     """
+    #set up path for runtime files
+    user_solver_dir = '/'.join(user_solver_file.split('/')[:-1])
+    tagged_solver_file = user_solver_dir + '/.tagged_solver.py'
+    running_solver_file = user_solver_dir + '/.running_solver.py'
+    optimal_solver_file = user_solver_dir + 'optimal_solver.py'
 
-    """ CURRENTLY UNUSED
-    #set arguments that are dynamic with problem 
+    #get info about all functions mgtune can configure
     wfdl = function_info.function_dict_list() #[w]orking [f]unction [d]ictionary [l]ist
-    for i_f, function_dict in enumerate(wfdl):
-        for (key,value) in function_dict.items():
-            if (isinstance(value,str) and ('preprocess' in value)):
-                function_key = key + '_set' #name of method to set value of key
-                wfdl[i_f][key]=function_dict[function_key](A_list,b_list)
-    """
-    #wfdl = function_info.function_dict_list() #[w]orking [f]unction [d]ictionary [l]ist
-    #print(wfdl)
 
+    #create tagged file
+    options_list = parsing.tag_file(user_solver_file,tagged_solver_file,wfdl)
+
+    """ for production
+    if os.path.exists(tagged_solver_file):
+        os.remove(tagged_solver_file)
+
+    shutil.copy(running_solver_file,optimal_solver_file)
     """
-    things to be done:
-        - determine which functions the user is using and where
-        - determine which parameters are free from parsing user kernel file
-        - 
-    """
+
+    return  optimal_solver_file
+
+
     
-                
-    #get text of user solver
-    #loop over all function
-    #    loop over all
-    #read user function to see which functions mg_tune knows about
 

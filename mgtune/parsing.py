@@ -55,7 +55,14 @@ def tag_file(file_name,tagged_file_name,fdl):
         function dictionary list, a list of dictionaries, each of which
         defines the free parameters of a function and its possible values
     ---Outputs---
-    NONE, writes to a file specified by input
+    parameter_options_list : {list}
+        list keeping track of all free parameters (those that are inserted with tag)
+            and their respective possible values
+        len(parameter_options_list) = number of free parameters in function call
+            given by string
+        len(parameter_options_list[i]) = 2
+        parameter_options_list[i] = [ith option name, ith argument options (or keywords)]
+    NOTE: also writes to file tagged_file_name
     """
     with open(file_name,'r') as f:
         lines = f.readlines()
@@ -82,13 +89,10 @@ def tag_file(file_name,tagged_file_name,fdl):
                 #function call with tagged version of the functionc call
                 num_tags_added = len(call_parameter_options_list)
                 cur_tag_num += num_tags_added
-                #TODO: result of above  should be added to parameter_options_list +=
-                #TODO: don't forget to use length of above output to increment num_parameter_tags
-    #TODO: may as well take advantage of having index of fuction start plus index of
-    #its closing parentheses to insert mark for each function
 
     with open(tagged_file_name,'w') as f:
         f.writelines(lines)
+    return parameter_options_list
         
 
 def tag_call(string,fd,first_tag_num):
@@ -124,13 +128,12 @@ def tag_call(string,fd,first_tag_num):
 
     #loop over every possible optional argument
     for key, item in fd.items():
-        if (isinstance(item,str)):
-            if (item == 'untunable'):
-                #don't search if argument is untunable
+        if (isinstance(item,str) and (item == 'untunable')):
+                #don't search in function call if argument is untunable
                 pass
         else: #search in string for instance of optional argument key
-            option_pattern = re.compile(key + ' *=') #key, any number of spaces, then =
-            m = re.match(option_pattern,string) #None if no matches
+            option_pattern = key + ' *=' #regex that matches: key, any number of spaces, then =
+            m = re.search(option_pattern,string) #None if no matches
             if (m is None): 
                 #optional_argument_name *= is not inside of function call string
                 #means that it should be set
