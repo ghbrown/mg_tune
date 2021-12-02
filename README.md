@@ -44,11 +44,11 @@ with a few **critical notes**:
 
     - full command names should be used, for example `pyamg.aggregation.smoothed_aggregation_solver`; for example, the following is not allowed
 
-    ```python
-    import pyamg
-    from pyamg import smoothed_aggregation_solver
-    ml = smoothed_aggregation_solver(A)
-    ```
+```python
+import pyamg
+from pyamg import smoothed_aggregation_solver
+ml = smoothed_aggregation_solver(A)
+```
 
     - tunable commands may not be broken over multiple lines (including their options); for example the following is not allowed
 
