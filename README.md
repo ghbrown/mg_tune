@@ -57,7 +57,7 @@ ml = pyamg.aggregation.smoothed_aggregation_solver(A,strength='symmetric',
                                                     smooth='jacobi')
 ```
 
-- tunable commands may be not resided in post-source comments; for example, the following is not allowed
+- tunable commands may not reside in post-source comments; for example, the following is not allowed
 
 ```python
 ml = pyamg.aggregation.smoothed_aggregation_solver(A) #pyamg.aggregation.smoothed_aggregation_solver
