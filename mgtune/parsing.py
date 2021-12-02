@@ -57,7 +57,8 @@ def mark_functions(file_name,marked_file_name,fdl):
     with open(file_name,'r') as f:
         lines = f.readlines()
 
-    num_functions_found = 0
+    num_parameter_tags = 0 #number of parameter tags which have been placed
+    parameter_options_list = [] #one parameter option for each tag placed
     #loop over all lines to see if they contain known functions
     for i_l,line in enumerate(lines): 
         for function_dict in fdl:
@@ -71,19 +72,58 @@ def mark_functions(file_name,marked_file_name,fdl):
                 post_call = line[end_call+1:]
                 call_string = line[start_call:end_call+1] #of form fun(.....)
                 mark_text = 'mg_tune_function_mark' + str(num_functions_found)
-                #lines[i_l] = pre_mark + mark_text + post_mark #insert mark in proper line
                 lines[i_l] = pre_call + post_call
                 find_free_parameters(call_string,function_dict)
-                num_functions_found += 1
     #TODO: may as well take advantage of having index of fuction start plus index of
     #its closing parentheses to insert mark for each function
 
     with open(marked_file_name,'w') as f:
         f.writelines(lines)
         
-def find_free_parameters(string,fdl):
-#        record location in file (maybe by inserting a keyword like mgtune_insert_N)
-#        determine which parameters are unset
-#        for each unset parameter:
-#            add a starting value to NOMAD parameter file and record it's number
-    pass
+
+def insert_parameter_tags(string,fd,first_tag_num):
+    """
+    given a string 'fun(a,b,c=20)'
+    return all (name, optional arguments) pairs of fun which have not been
+    set using knowledge of all optional present in the function
+    dictionary fd
+    and return a tagged version of call string like
+    'fun(a,b,c=20,d=mgtune_option_0,e=mg_tune_tag_1}'
+    ---Inputs---
+    string : {string}
+        the string representing the function call, for example
+            string = 'fun(a,b,c=20)'
+    fdl : {list}
+        function dictionary list, a list of dictionaries, each of which
+        defines the free parameters of a function and its possible values
+    first_tag_num : {integer}
+        number to assign to first tag placed in string
+    ---Outputs---
+    parameter_options : {lists}
+        len(parameter_options) = number of free parameters in function call
+            given by string
+        len(parameter_options[i]) = 2
+        parameter_options[i] = [ith argument name, ith argument options (or keywords)]
+    """
+    string_no_newline_spaces = ''.join(string.strip().split())
+
+    parameter_options = [] #items to be appended
+    cur_tag = first_tag_num
+    #loop over every possible optional argument
+    for key, item in fdl.items():
+        if (isinstance(item,string)):
+            if (item == 'untunable'):
+                #don't search if argument is untunable
+                pass
+        else: #search in string for instance of optional argument key
+            if ((key+'=') not in string_no_newline_spaces):
+                #optional_argument_name= is not inside of function call string
+                parameter_options.append([key,item])
+    return parameter_options
+                
+
+             
+
+            
+        
+
