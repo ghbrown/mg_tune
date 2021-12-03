@@ -8,8 +8,9 @@ def function_dict_list():
     ---Inputs---
     NONE
     ---Outputs---
-    function_ei : {list}
-       discrete values of max_coarse, with values as specified above 
+    fdl : {list}
+        function dictionary list, a list of dictionaries, each of which
+        defines the free parameters of a function and its possible values
     """
     fdl = [sa_dict] #[f]unction [d]ictionary [l]ist
     return copy.deepcopy(fdl)
@@ -19,8 +20,11 @@ def tunable():
     """
     Print all tunable functions to terminal
     """
+    print('\nmgtune can optimize all or some of the optional arguments of:')
     for cur_dict in function_dict_list():
         print('    ' + cur_dict["function_name"])
+    print('by default. \n\nHowever, if you would like it to optimize over custom parameters')
+    print('use the optional argument of mgtune.tune(A_list,b_list,wfdl=None)\n')
 
 
 #DICTIONARIES DEFINING PARAMETER NAMES AND POSSIBLE VALUES FOR FUNCTIONS

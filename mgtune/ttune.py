@@ -5,7 +5,7 @@ from . import function_info
 from . import parsing
 
 
-def tune(user_solver_file,A_list,b_list):
+def tune(user_solver_file,A_list,b_list,wfdl=None):
     """
     tunes the solver defined in user_solver_file for the problem(s)
     defined by (A_list, b_list)
@@ -24,6 +24,11 @@ def tune(user_solver_file,A_list,b_list):
         list of matrices whose solution is desired
     b_list : {list}
         corresponding list of right hand sides for linear systems
+    wfdl : {list}
+        working function dictionary list, a list of dictionaries, each of which
+        defines the free parameters of a function and its possible values
+        (this allows a user who knows what they are doing to set up a custom
+            run with a limited or expanded set of possible parameters)
     ---Outputs---
     optimal_solver_file : {path}
         path to an optimized version of solver at location user_solver_file 
@@ -34,8 +39,10 @@ def tune(user_solver_file,A_list,b_list):
     running_solver_file = user_solver_dir + '/.running_solver.py'
     optimal_solver_file = user_solver_dir + 'optimal_solver.py'
 
-    #get info about all functions mgtune can configure
-    wfdl = function_info.function_dict_list() #[w]orking [f]unction [d]ictionary [l]ist
+    #get info about all functions mgtune can configure and their options
+    #either from user input, or from mgtune's internal "database"
+    if (wfdl is None):
+        wfdl = function_info.function_dict_list() #[w]orking [f]unction [d]ictionary [l]ist
 
     #create tagged file
     options_list = parsing.tag_file(user_solver_file,tagged_solver_file,wfdl)

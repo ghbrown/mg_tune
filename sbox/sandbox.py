@@ -1,7 +1,7 @@
 
 from pathlib import Path
 import numpy as np
-#import pyamg    #PROBLEM, PYAMG IS BROKEN INSIDE VENV
+import pyamg    #PROBLEM, PYAMG IS BROKEN INSIDE VENV
 
 import mgtune
 from mgtune import parsing
@@ -12,6 +12,7 @@ from mgtune import function_info
 fdl = mgtune.function_info.function_dict_list()
 mgtune.parsing.tag_file(solver_path,tagged_solver_path,fdl)
 """
+mgtune.tunable()
 
 
 n = 100
