@@ -1,7 +1,7 @@
 
 from pathlib import Path
 import numpy as np
-import pyamg    #PROBLEM, PYAMG IS BROKEN INSIDE VENV
+import pyamg
 
 import mgtune
 from mgtune import parsing

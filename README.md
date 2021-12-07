@@ -68,6 +68,18 @@ ml = pyamg.aggregation.smoothed_aggregation_solver(A) #pyamg.aggregation.smoothe
 
 `python3` + `numpy` + `pyamg`
 
-[NOMAD: a blackbox optimization software](https://nomad-4-user-guide.readthedocs.io/en/latest/)
+[NOMAD: a blackbox optimization software](https://nomad-4-user-guide.readthedocs.io/en/latest/) (which requires Cython)
+
+Setup:
+
+- obtain `python`, `numpy`, `pyamg`, and `cython` (via `pip`, Anaconda, etc.)
+
+- clone NOMAD from [GitHub repo](https://github.com/bbopt/nomad)
+
+- build and install NOMAD according the [instructions](https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html), be sure to build the Python interface; if using Anaconda, be sure you are in the environment to which you want the Python interface installed when you are building and installing NOMAD
+
+- obtain `mgtune`
+
+
 
 
