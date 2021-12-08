@@ -1,8 +1,10 @@
 
 import os
 import numpy as np
+import PyNomad as pynomad
 from . import function_info
 from . import parsing
+from . import optinterface
 
 
 def tune(user_solver_file,A_list,b_list,wfdl=None):
@@ -35,9 +37,13 @@ def tune(user_solver_file,A_list,b_list,wfdl=None):
     """
     #set up path for runtime files
     user_solver_dir = '/'.join(user_solver_file.split('/')[:-1])
-    tagged_solver_file = user_solver_dir + '/.tagged_solver.py'
-    running_solver_file = user_solver_dir + '/.running_solver.py'
-    optimal_solver_file = user_solver_dir + 'optimal_solver.py'
+    working_dir = user_solver_dir + '/mgtune_working'
+    tagged_solver_file = working_dir + '/tagged_solver.py'
+    running_solver_file = working_dir + '/running_solver.py'
+    optimal_solver_file = user_solver_dir + '/optimal_solver.py'
+    types_file = working_dir + '/param_types.txt'
+    lower_bounds_file = working_dir + '/param_lower_bounds.txt'
+    upper_bounds_file = working_dir + '/param_upper_bounds.txt'
 
     #get info about all functions mgtune can configure and their options
     #either from user input, or from mgtune's internal "database"
@@ -46,6 +52,24 @@ def tune(user_solver_file,A_list,b_list,wfdl=None):
 
     #create tagged file
     options_list = parsing.tag_file(user_solver_file,tagged_solver_file,wfdl)
+    optinterface.write_types_and_bounds(options_list,types_file,
+                                        lower_bounds_file,upper_bounds_file)
+
+    #create pickle of A_list and b_list
+
+    #creat pickle of options_list
+    
+    #create params file (for NOMAD)
+
+    #process params file into a single list of strings
+    with open('youll have to fix this') as f:
+        lines = f.readlines()
+
+    #retain only lines with things on them
+    params = [line.strip() for line in lines if not line.isspace()] 
+
+    #call NOMAD on params file (as string)
+    pynomad.optimizeWithMainStep(params)
 
     """ for production
     if os.path.exists(tagged_solver_file):
@@ -53,6 +77,7 @@ def tune(user_solver_file,A_list,b_list,wfdl=None):
 
     shutil.copy(running_solver_file,optimal_solver_file)
     """
+
 
     return  optimal_solver_file
 

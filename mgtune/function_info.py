@@ -51,7 +51,7 @@ sa_dict = {
     "improve_candidates" : 'untunable',
     "max_coarse" : [33,25,20,17,13,9,5,3], #having as actual integer would be disaster
     #perhaps change from these values to range(2,51) if speed allows
-    "max_levels" : 'unbounded_int',
+    "max_levels" : list(range(16)), #number of levels, realistically not above 15
     "cycle_type" : ['V','W','F'],
     "coarse_solver" : ['splu','lu','cholesky','pinv','gauss_seidel'],
     "keep" : 'untunable',
