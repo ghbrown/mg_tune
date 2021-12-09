@@ -1,10 +1,10 @@
 BB_OUTPUT_TYPE OBJ
-BB_EXE "$python /home/ghbrown/Documents/Coding/Python/mg_tune/sbox/mgtune_working/obj.py"
+BB_EXE "$python /home/ghbrown/Temporary/rmbuffer/mg_tune/sbox/mgtune_working/obj.py"
 
 DIMENSION 7
 BB_INPUT_TYPE ( I I I I I I I )
 LOWER_BOUND ( 0 0 0 0 0 0 0 )
-UPPER_BOUND ( 2 2 1 7 15 2 4 )
+UPPER_BOUND ( 2 2 2 7 15 2 4 )
 
 LH_SEARCH 1 1
 

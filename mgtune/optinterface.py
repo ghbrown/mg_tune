@@ -47,13 +47,18 @@ def iterate_to_running_solver(x,obj_dir):
     ---Outputs---
     """
 
+    options_file = obj_dir + '/options.p'
+    types_file = obj_dir + '/param_types.txt'
+    tagged_solver_file = obj_dir + '/tagged_solver.py'
+    running_solver_file = obj_dir + '/running_solver.py'
+
     #options_list is a list of two element lists
     #options_list[i][0] is the parameter's name
     #options_list[i][1] is a list of its possible values (or  bounds if the
     #variable is a float, etc.)
-    options_list = pickle.load(open(obj_dir+'/options.p','rb'))
+    options_list = pickle.load(open(options_file,'rb'))
 
-    with open(obj_dir+'/param_types.txt','r') as f:
+    with open(types_file,'r') as f:
         line = f.readlines()[0] #only one line file
     type_list = line.split()
 
@@ -70,7 +75,7 @@ def iterate_to_running_solver(x,obj_dir):
 
     #write parameters that correspond to x into the tagged
     #solver to create running solver
-    with open(obj_dir+'/tagged_solver.py') as f:
+    with open(tagged_solver_file) as f:
         tagged_lines = f.readlines()
     running_lines = [0]*len(tagged_lines)
     num_tags_found = 0

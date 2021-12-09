@@ -9,8 +9,7 @@ def function_dict_list():
     NONE
     ---Outputs---
     fdl : {list}
-        function dictionary list, a list of dictionaries, each of which
-        defines the free parameters of a function and its possible values
+        function dictionary list, a list of dictionaries, each of which defines the free parameters of a function and its possible values
     """
     fdl = [sa_dict] #[f]unction [d]ictionary [l]ist
     return copy.deepcopy(fdl)
@@ -41,19 +40,21 @@ sa_dict = {
     "B" : 'untunable', #False means that parameter is untunable by mgtune
     "BH" : 'untunable',
     "symmetry" : 'untunable',
-    "strength" : ['symmetric','classical','evolution','algebraic_distance'],
+    "strength" : ['\'symmetric\'','\'classical\'','\'evolution\'','\'algebraic_distance\''],
     #need to accomomodate stuff like strength = ('symmetric',{'theta':0.25})
-    "aggregate" : ['standard','lloyd','naive'],
-    "smooth" : ['jacobi','richardson','energy'],
+    "aggregate" : ['\'standard\'','\'lloyd\'','\'naive\''],
+    "smooth" : ['\'jacobi\'','\'richardson\'','\'energy\''],
     #need to accomomodate stuff like smooth = ('jacobi',{'theta':0.25})
-    "presmoother" : ['???','???'], #actually no idea what the options are
-    "postsmoother" : ['???','???'], #actually no idea what the options are
+    "presmoother" : ['\'jacobi\'','\'richardson\'','\'energy\''],
+    "postsmoother" : ['\'jacobi\'','\'richardson\'','\'energy\''],
+    #not exactly sure what options are for above two arguments
     "improve_candidates" : 'untunable',
-    "max_coarse" : [33,25,20,17,13,9,5,3], #having as actual integer would be disaster
+    "max_coarse" : [str(elem) for elem in [33,25,20,17,13,9,5,3]],
+    #having as actual integer could be disaster at high end
     #perhaps change from these values to range(2,51) if speed allows
-    "max_levels" : list(range(16)), #number of levels, realistically not above 15
-    "cycle_type" : ['V','W','F'],
-    "coarse_solver" : ['splu','lu','cholesky','pinv','gauss_seidel'],
+    "max_levels" : [str(elem) for elem in range(16)], #number of levels, realistically not above 15
+    "cycle_type" : ['\'V\'','\'W\'','\'F\''],
+    "coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
     "keep" : 'untunable',
     }
 

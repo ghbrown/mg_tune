@@ -18,21 +18,18 @@ def obj():
     obj_dir = str(Path(__file__).parent) #directory containing objective function
     A_list = pickle.load(open(obj_dir+'/A_list.p','rb'))
     b_list = pickle.load(open(obj_dir+'/b_list.p','rb'))
-    #import running_solver
+    mgtune.optinterface.iterate_to_running_solver(x,obj_dir)
+    import running_solver
 
-    """
-    t = 0
+    t = 0 #time to solve all systems in users "training set"
     for A,b in zip(A_list,b_list):
         t_0 = time.perf_counter()
         running_solver.solve(A,b)
         t_1 = time.perf_counter()
         t += (t_1 - t_0)
-    """
     
-    mgtune.optinterface.iterate_to_running_solver(x,obj_dir)
+    f = t #objective function is total time
 
-    f = np.sum(np.abs(x))
-    
-    print(f) #printing value is equivalent to returning it
+    print(f) #return value to NOMAD by printing
 
 obj()
