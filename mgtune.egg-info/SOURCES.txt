@@ -1,6 +1,5 @@
 .gitignore
 LICENSE
-Makefile
 README.md
 setup.py
 bin/mgtune
@@ -8,6 +7,7 @@ examples/smoothed_aggregation/example.py
 examples/smoothed_aggregation/sa_solver.py
 mgtune/__init__.py
 mgtune/function_info.py
+mgtune/obj.py
 mgtune/optinterface.py
 mgtune/outline.py
 mgtune/parsing.py
@@ -21,6 +21,7 @@ mgtune/__pycache__/__init__.cpython-310.pyc
 mgtune/__pycache__/__init__.cpython-39.pyc
 mgtune/__pycache__/function_info.cpython-310.pyc
 mgtune/__pycache__/function_info.cpython-39.pyc
+mgtune/__pycache__/optinterface.cpython-310.pyc
 mgtune/__pycache__/parsing.cpython-310.pyc
 mgtune/__pycache__/parsing.cpython-39.pyc
 mgtune/__pycache__/ttune.cpython-310.pyc
@@ -28,3 +29,12 @@ mgtune/__pycache__/ttune.cpython-39.pyc
 sbox/.tagged_solver.py
 sbox/sa_solver.py
 sbox/sandbox.py
+sbox/mgtune_working/A_list.p
+sbox/mgtune_working/b_list.p
+sbox/mgtune_working/obj.py
+sbox/mgtune_working/options.p
+sbox/mgtune_working/param_lower_bounds.txt
+sbox/mgtune_working/param_types.txt
+sbox/mgtune_working/param_upper_bounds.txt
+sbox/mgtune_working/params.txt
+sbox/mgtune_working/tagged_solver.py

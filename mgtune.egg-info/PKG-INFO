@@ -33,7 +33,7 @@ The file at location given by `driver.py` defines your linear systems, and makes
 opt_settings = mgtune.tune(path_to_file_with_solver,A_list,b_list)
 ```
 
-The file at location specified by `path_to_file_with_solver` has the rough form
+The file at location specified by `path_to_file_with_solver` (**which may not contain spaces, a limitation of NOMAD**) has the rough form
 
 ```python
 import pyamg

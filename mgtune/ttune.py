@@ -10,7 +10,7 @@ from . import parsing
 from . import optinterface
 
 
-def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000):
+def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
     """
     tunes the solver defined in user_solver_file for the problem(s)
     defined by (A_list, b_list)
@@ -36,6 +36,8 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000):
             run with a limited or expanded set of possible parameters)
     max_it : {integer}
         maximum number of function evaluations for optimizer
+    disp_level {integer}
+        detail level of NOMAD's terminal output, in [0,3] inclusive
     ---Outputs---
     optimal_solver_file : {path}
         path to an optimized version of solver at location user_solver_file 

@@ -32,7 +32,7 @@ solver_path = cur_dir + '/sa_solver.py'
 tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
 
 
-mgtune.tune(solver_path,A_list,b_list,max_f_eval=2)
+mgtune.tune(solver_path,A_list,b_list,max_f_eval=10,disp_level=3)
 
 
 

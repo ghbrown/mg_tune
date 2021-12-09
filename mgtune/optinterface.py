@@ -19,10 +19,6 @@ def write_params_file(params_file,obj_file,type_file,lower_file,upper_file,max_f
 
     dimension = len(type_string.split()) #number of decision variables
 
-    obj_file_safe_path = '\ '.join(obj_file.split())
-    print(obj_file)
-    print(obj_file_safe_path)
-
     lines = []
     lines.append(f'BB_OUTPUT_TYPE OBJ\n')
     lines.append(f'BB_EXE \"$python {obj_file}\"\n\n')
@@ -30,16 +26,28 @@ def write_params_file(params_file,obj_file,type_file,lower_file,upper_file,max_f
     lines.append(f'BB_INPUT_TYPE ( {type_string} )\n')
     lines.append(f'LOWER_BOUND ( {lower_bound_string} )\n')
     lines.append(f'UPPER_BOUND ( {upper_bound_string} )\n\n')
-    lines.append(f'LH_SEARCH 1 1\n') #use latin hypercube search to set X0
-    lines.append(f'X0\n\n')
+    lines.append(f'LH_SEARCH 1 1\n\n') #use latin hypercube search to set X0
     lines.append(f'MAX_BB_EVAL {max_f_eval}\n\n')
     lines.append(f'DISPLAY_DEGREE 2')
 
     with open(params_file,'w') as f:
         f.writelines(lines)
 
-def tagged_solver_to_running_solver(x):
-    options_list = pickle.load(open('params.txt'))
+
+def iterate_to_running_solver(x,obj_dir):
+    """
+    takes the current NOMAD iterate (a vector of numbers largely
+    corresponding to option value indices) and uses them to
+    ---Inputs---
+    x : {list}
+        current NOMAD iterate, made of integers and floats
+    obj_dir : {path or string}
+        directory which houses the NOMAD objective function
+        likely something like .../user_running_dir/mgtune_working/
+    ---Outputs---
+    """
+    options_list = pickle.load(open(obj_dir+'/options.p','rb'))
+    print('unpickled successfully')
     #unpickle
     #read option type parameters
     #look at lines in tagged solver file
