@@ -12,11 +12,9 @@ from mgtune import function_info
 #printout of tunable functions
 mgtune.tunable()
 
-n = 100
-A = np.random.rand(n,n)
-A = pyamg.gallery.poisson((100,),format='csr') #matrix
-#A = pyamg.gallery.poisson((n,n), format='csr')   # matrix
-b = np.ones((A.shape[0]))                        # right hand side
+n = 1000
+A = pyamg.gallery.poisson((n,),format='csr')  #matrix
+b = np.ones((A.shape[0]))                     #right hand side
 
 #put systems in mgtune's expected form
 A_list = [A]
@@ -29,7 +27,7 @@ solver_path = cur_dir + '/sa_solver.py'
 tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
 
 #tune solver at location solver_path
-mgtune.tune(solver_path,A_list,b_list,max_f_eval=10,disp_level=3)
+mgtune.tune(solver_path,A_list,b_list,max_f_eval=20,disp_level=3)
 
 
 

@@ -10,7 +10,8 @@ from . import parsing
 from . import optinterface
 
 
-def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
+def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
+         max_f_eval=1000,disp_level=2):
     """
     tunes the solver defined in user_solver_file for the problem(s)
     defined by (A_list, b_list)
@@ -34,6 +35,8 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
         defines the free parameters of a function and its possible values
         (this allows a user who knows what they are doing to set up a custom
             run with a limited or expanded set of possible parameters)
+    optimal_solver_file : {string or path}
+        location to save source code of optimal solver configuration
     max_it : {integer}
         maximum number of function evaluations for optimizer
     disp_level {integer}
@@ -46,11 +49,12 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
     user_solver_dir = '/'.join(user_solver_file.split('/')[:-1])
     working_dir_name = 'mgtune_working'
     working_dir = user_solver_dir + '/' + working_dir_name
-    tagged_solver_file = working_dir + '/tagged_solver.py'
+    if (optimal_solver_file is None):
+        optimal_solver_file = user_solver_dir + '/optimal_solver.py'
 
-    #internal mgtune files
+    #names of internal mgtune files
+    tagged_solver_file = working_dir + '/tagged_solver.py'
     running_solver_file = working_dir + '/running_solver.py'
-    optimal_solver_file = user_solver_dir + '/optimal_solver.py'
     types_file = working_dir + '/param_types.txt'
     lower_bounds_file = working_dir + '/param_lower_bounds.txt'
     upper_bounds_file = working_dir + '/param_upper_bounds.txt'
@@ -103,13 +107,12 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
     #call NOMAD with params
     pynomad.optimizeWithMainStep(nomad_params_list)
 
-    """ TODO: for production
-    if os.path.exists(tagged_solver_file):
-        os.remove(tagged_solver_file)
-
+    #copy source code of optimal solver to user side
     shutil.copy(running_solver_file,optimal_solver_file)
-    """
 
+    #delete temporary working/running directory
+    if os.path.exists(working_dir):
+        os.remove(working_dir)
 
     return  optimal_solver_file
 
