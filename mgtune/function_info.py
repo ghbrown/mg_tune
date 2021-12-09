@@ -52,7 +52,7 @@ sa_dict = {
     "max_coarse" : [str(elem) for elem in [33,25,20,17,13,9,5,3]],
     #having as actual integer could be disaster at high end
     #perhaps change from these values to range(2,51) if speed allows
-    "max_levels" : [str(elem) for elem in range(16)], #number of levels, realistically not above 15
+    "max_levels" : [str(elem) for elem in range(2,16)], #number of levels, realistically not above 15
     #"cycle_type" : ['\'V\'','\'W\'','\'F\''], 
     #"coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
     #TODO: above two commented out because they are not optional arguments
