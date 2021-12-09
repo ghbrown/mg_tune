@@ -25,35 +25,49 @@ designed specifically to interface with [PyAMG](https://pyamg.readthedocs.io/en/
 
 ## Workflow
 
-User has a linear system (or a collection of linear systems) for which they would like to select optimal multigrid parameters.
-
-The file at location given by `driver.py` defines your linear systems, and makes a call of the form
-
-```python
-opt_settings = mgtune.tune(path_to_file_with_solver,A_list,b_list)
-```
-
-The file at location specified by `path_to_file_with_solver` (**which may not contain spaces, a limitation of NOMAD**) has the rough form
+User has linear system (or collection of linear systems) for which they would like to select optimal multigrid parameters.
+User also chooses general form of solver (smoothed aggregation, etc.) and writes a simple solve kernel which is to be optimized in a file we'll call `user_solver.py`, which has the form
 
 ```python
 import pyamg
 <other imports>
 
-<other helper functions>
+<other helper functions if needed>
 
-def solver(A,b):
+def solve(A,b):
     #must have function with this name and input/output
-    #INPUTS: A: matrix, b: vector
+    #INPUTS: A: square matrix, b: vector
     #OUTPUTS: x: vector
     <custom solver using pyamg and arbitrary Python>
     return x
 ```
 
-with a few **critical notes**:
+A separate driver script is used to actually define these linear systems and call `mgtune` on user's custom solver
 
-- currently, `mgtune` can only optimize certain functions within PyAMG (since support for functions must be added manually) 
-- all specified optional arguments to such functions will be considered fixed, conversely, (nearly) all unspecified optinal arguments will be optimized over
-- the parameters which are not optimized (candidate vectors, for example) are omitted because their parameter space is too large, or the parser/writer implementation would be extremely complex (thankfully these cases are rather rare)
+```python
+import mgtune
+
+A_list = <list of matrices for which solver should be tuned>
+b_list = <corresponding right hand sides>
+
+opt_settings = mgtune.tune(path_to_user_solver,A_list,b_list)
+```
+
+Note that `path_to_user_solver` **may not contain spaces, a limitation of NOMAD**!
+
+The overall directory sturcture is then
+
+```
+some_dir/
+  |--user_solver.py
+  |--driver.py
+```
+
+Other **critical notes**:
+
+- currently, `mgtune` can only optimize certain functions within PyAMG (since support for functions must be added manually), to see what these functions are, call `mgtune.tunable()` in the driver.
+- all optional arguments to tunable functions in `user_solver.py` will be considered fixed, conversely, (nearly) all unspecified optinal arguments will be optimized over
+- the parameters which cannot optimized (candidate vectors, for example) are omitted because their parameter space is too large, or the parser/writer implementation would be extremely complex (thankfully these cases are rather rare)
 - all of this happens by parsing the solver file at `path_to_file_with_solver` and injecting different optional parameters during optimization, so try to keep syntax in this file simple for the best results (ultimately, this should be done by acessing the abstract syntax tree of the user's custom solver functions)
 
 

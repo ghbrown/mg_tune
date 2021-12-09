@@ -9,6 +9,7 @@ mgtune/__init__.py
 mgtune/function_info.py
 mgtune/obj.py
 mgtune/optinterface.py
+mgtune/optinterface_rescued.py
 mgtune/outline.py
 mgtune/parsing.py
 mgtune/ttune.py
@@ -37,4 +38,5 @@ sbox/mgtune_working/param_lower_bounds.txt
 sbox/mgtune_working/param_types.txt
 sbox/mgtune_working/param_upper_bounds.txt
 sbox/mgtune_working/params.txt
+sbox/mgtune_working/running_solver.py
 sbox/mgtune_working/tagged_solver.py

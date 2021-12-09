@@ -64,7 +64,6 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
     params_file = working_dir + '/params.txt' #NOMAD solver options etc.
     obj_file_name = 'obj.py'
     obj_file = working_dir + '/obj.py' #NOMAD's black box objective function
-    #obj_file_rel_path = working_dir_name + 'obj.py'
 
     #create directory in which to keep data/running/working files
     try: 
@@ -95,6 +94,7 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,max_f_eval=1000,disp_level=2):
                                    max_f_eval)
 
     #copy prewritten objective function into working/running directory so NOMAD can find it
+    print(mgtune_dir+'obj.py')
     shutil.copy(mgtune_dir+'/obj.py',working_dir)
 
     #convert params file into a single list of strings, each element sets and option
