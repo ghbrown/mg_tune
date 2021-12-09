@@ -45,16 +45,17 @@ sa_dict = {
     "aggregate" : ['\'standard\'','\'lloyd\'','\'naive\''],
     "smooth" : ['\'jacobi\'','\'richardson\'','\'energy\''],
     #need to accomomodate stuff like smooth = ('jacobi',{'theta':0.25})
-    "presmoother" : ['\'jacobi\'','\'richardson\'','\'energy\''],
-    "postsmoother" : ['\'jacobi\'','\'richardson\'','\'energy\''],
+    "presmoother" : ['\'jacobi\'','\'gauss_seidel\'','\'richardson\'','\'sor\''],
+    "postsmoother" : ['\'jacobi\'','\'gauss_seidel\'','\'richardson\'','\'sor\''],
     #not exactly sure what options are for above two arguments
     "improve_candidates" : 'untunable',
     "max_coarse" : [str(elem) for elem in [33,25,20,17,13,9,5,3]],
     #having as actual integer could be disaster at high end
     #perhaps change from these values to range(2,51) if speed allows
     "max_levels" : [str(elem) for elem in range(16)], #number of levels, realistically not above 15
-    "cycle_type" : ['\'V\'','\'W\'','\'F\''],
-    "coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
+    #"cycle_type" : ['\'V\'','\'W\'','\'F\''], 
+    #"coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
+    #TODO: above two commented out because they are not optional arguments
     "keep" : 'untunable',
     }
 
