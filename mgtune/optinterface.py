@@ -95,9 +95,11 @@ def iterate_to_running_solver(x,obj_dir):
                 found_all_tags_in_line = True 
                 running_lines[i_line] = cur_line
 
-    with open(obj_dir+'/nomad_obj_debug.txt','w') as f:
+    #write lines of source code corresponding to
+    #version of user's file with current options specified
+    #by NOMAD
+    with open(running_solver_file,'w') as f:
         f.writelines(running_lines)
-        #f.writelines([' '.join(parameter_strings)])
     
 
 def params_file_to_list(params_file):
