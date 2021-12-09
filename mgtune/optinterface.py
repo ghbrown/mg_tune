@@ -46,12 +46,53 @@ def iterate_to_running_solver(x,obj_dir):
         likely something like .../user_running_dir/mgtune_working/
     ---Outputs---
     """
+
+    #options_list is a list of two element lists
+    #options_list[i][0] is the parameter's name
+    #options_list[i][1] is a list of its possible values (or  bounds if the
+    #variable is a float, etc.)
     options_list = pickle.load(open(obj_dir+'/options.p','rb'))
-    print('unpickled successfully')
-    #unpickle
-    #read option type parameters
-    #look at lines in tagged solver file
-    #replace tag with option value
+
+    with open(obj_dir+'/param_types.txt','r') as f:
+        line = f.readlines()[0] #only one line file
+    type_list = line.split()
+
+    #determine parameters that correspond to x
+    parameter_strings = [0]*len(x) #list to hold parameter strings
+
+    for i_p,(x_cur,type_cur) in enumerate(zip(x,type_list)):
+        if (type_cur == 'R'):
+            print('ERROR: mgtune does not yet support real (non-integer) parameters')
+        elif (type_cur == 'B'):
+            print('ERROR: mgtune does not yet support binary parameters (though it easily could)')
+        elif (type_cur == 'I'):
+            parameter_strings[i_p] = str(options_list[i_p][1][x_cur])
+
+    #write parameters that correspond to x into the tagged
+    #solver to create running solver
+    with open(obj_dir+'/tagged_solver.py') as f:
+        tagged_lines = f.readlines()
+    running_lines = [0]*len(tagged_lines)
+    num_tags_found = 0
+    tag_string_cur = f'mgtune_tag_{num_tags_found}'
+    for i_line,tagged_line in enumerate(tagged_lines):
+        cur_line = tagged_lines[i_line]
+        found_all_tags_in_line = False
+        while (not found_all_tags_in_line): 
+            cur_line_split = cur_line.split(tag_string_cur)
+            if (len(cur_line_split) == 2):
+                #current tag was in line, update cur_line by inserting parameter at split point
+                cur_line = cur_line_split[0] + parameter_strings[num_tags_found] + cur_line_split[1]
+                num_tags_found += 1
+                tag_string_cur = f'mgtune_tag_{num_tags_found}'
+            elif (len(cur_line_split) == 1):
+                #can't split on current tag (since it's not in line)
+                found_all_tags_in_line = True 
+                running_lines[i_line] = cur_line
+
+    with open(obj_dir+'/nomad_obj_debug.txt','w') as f:
+        f.writelines(running_lines)
+        #f.writelines([' '.join(parameter_strings)])
     
 
 def params_file_to_list(params_file):
