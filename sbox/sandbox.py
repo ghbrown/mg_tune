@@ -2,6 +2,7 @@
 from pathlib import Path
 import numpy as np
 import pyamg
+import pyamg.gallery
 
 import mgtune
 from mgtune import parsing
@@ -17,6 +18,7 @@ mgtune.tunable()
 
 n = 100
 A = np.random.rand(n,n)
+A = pyamg.gallery.poisson((100,))
 #A = pyamg.gallery.poisson((n,n), format='csr')   # matrix
 b = np.ones((A.shape[0]))                        # right hand side
 
@@ -30,7 +32,7 @@ solver_path = cur_dir + '/sa_solver.py'
 tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
 
 
-mgtune.tune(solver_path,A_list,b_list)
+mgtune.tune(solver_path,A_list,b_list,max_f_eval=2)
 
 
 

@@ -61,7 +61,7 @@ def tag_file(file_name,tagged_file_name,fdl):
         len(parameter_options_list) = number of free parameters in function call
             given by string
         len(parameter_options_list[i]) = 2
-        parameter_options_list[i] = [ith option name, ith argument options (or keywords)]
+        parameter_options_list[i] = [ith option name, list of ith argument options (or keywords)]
     NOTE: also writes to file tagged_file_name
     """
     with open(file_name,'r') as f:
@@ -131,6 +131,8 @@ def tag_call(string,fd,first_tag_num):
         if (isinstance(item,str) and (item == 'untunable')):
                 #don't search in function call if argument is untunable
                 pass
+        elif (key == 'function_name'):
+            pass #function name is not really a parameter
         else: #search in string for instance of optional argument key
             option_pattern = key + ' *=' #regex that matches: key, any number of spaces, then =
             m = re.search(option_pattern,string) #None if no matches

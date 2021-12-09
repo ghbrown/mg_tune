@@ -1,0 +1,14 @@
+BB_OUTPUT_TYPE OBJ
+BB_EXE "$python /home/ghbrown/Documents/Illinois/2021-2022/Semester 1/Iterative and Multigrid Methods/Project/mg_tune/sbox/mgtune_working/obj.py"
+
+DIMENSION 7
+BB_INPUT_TYPE ( I I I I I I I )
+LOWER_BOUND ( 0 0 0 0 0 0 0 )
+UPPER_BOUND ( 2 2 1 7 15 2 4 )
+
+LH_SEARCH 1 1
+X0
+
+MAX_BB_EVAL 2
+
+DISPLAY_DEGREE 2
