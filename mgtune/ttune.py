@@ -111,7 +111,7 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
     shutil.copy(running_solver_file,optimal_solver_file)
 
     #delete temporary working/running directory
-    if os.path.exists(working_dir):
+    if (os.path.exists(working_dir)):
         shutil.rmtree(working_dir)
 
     return  optimal_solver_file

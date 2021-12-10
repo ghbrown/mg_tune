@@ -26,7 +26,7 @@ def write_params_file(params_file,obj_file,type_file,lower_file,upper_file,max_f
     lines.append(f'BB_INPUT_TYPE ( {type_string} )\n')
     lines.append(f'LOWER_BOUND ( {lower_bound_string} )\n')
     lines.append(f'UPPER_BOUND ( {upper_bound_string} )\n\n')
-    lines.append(f'LH_SEARCH 1 1\n\n') #use latin hypercube search to set X0
+    lines.append(f'LH_SEARCH 1 0\n\n') #use latin hypercube search to set X0
     lines.append(f'MAX_BB_EVAL {max_f_eval}\n\n')
     lines.append(f'DISPLAY_DEGREE 2')
 
@@ -34,49 +34,61 @@ def write_params_file(params_file,obj_file,type_file,lower_file,upper_file,max_f
         f.writelines(lines)
 
 
-def iterate_to_running_solver(x,obj_dir):
+def get_parameter_strings(x,options_list,param_types,obj_dir):
     """
-    takes the current NOMAD iterate (a vector of numbers largely
-    corresponding to option value indices) and uses them to
+    gives the source code snippets corresponding to the current iterate
     ---Inputs---
     x : {list}
         current NOMAD iterate, made of integers and floats
+    param_types : {list}
+        list of strings corresponding to NOMAD parameters types
+        'I' -> integer
+        'R' -> real
+        'B' -> binary
+    options_list : {list}
+        list keeping track of all free parameters (those that are inserted with tag)
+            and their respective possible values
+        len(parameter_options_list) = number of parameters NOMAD is optimizing
+            given by string
+        len(parameter_options_list[i]) = 2
+        parameter_options_list[i] = [ith option name, list of ith argument options (or keywords)]
     obj_dir : {path or string}
         directory which houses the NOMAD objective function
         likely something like .../user_running_dir/mgtune_working/
     ---Outputs---
+    parameter_strings : {list}
+       list of strings, each corresponding to a parameter option
     """
 
-    options_file = obj_dir + '/options.p'
-    types_file = obj_dir + '/param_types.txt'
-    tagged_solver_file = obj_dir + '/tagged_solver.py'
-    running_solver_file = obj_dir + '/running_solver.py'
-
-    #options_list is a list of two element lists
-    #options_list[i][0] is the parameter's name
-    #options_list[i][1] is a list of its possible values (or  bounds if the
-    #variable is a float, etc.)
-    options_list = pickle.load(open(options_file,'rb'))
-
-    with open(types_file,'r') as f:
-        line = f.readlines()[0] #only one line file
-    type_list = line.split()
-
-    #determine parameters that correspond to x
     parameter_strings = [0]*len(x) #list to hold parameter strings
 
-    for i_p,(x_cur,type_cur) in enumerate(zip(x,type_list)):
+    for i_p,(x_cur,type_cur) in enumerate(zip(x,param_types)):
         if (type_cur == 'R'):
             print('ERROR: mgtune does not yet support real (non-integer) parameters')
         elif (type_cur == 'B'):
             print('ERROR: mgtune does not yet support binary parameters (though it easily could)')
         elif (type_cur == 'I'):
             parameter_strings[i_p] = str(options_list[i_p][1][x_cur])
+    return parameter_strings
 
-    #write parameters that correspond to x into the tagged
-    #solver to create running solver
-    with open(tagged_solver_file) as f:
-        tagged_lines = f.readlines()
+
+def overwrite_tags_with_parameters(tagged_lines,parameter_strings):
+    """
+    Takes tagged lines and the respective options and creates a
+    valid Python source file.
+    ---Inputs---
+    tagged_lines : {list}
+        list of all lines making up the tagged source code of the
+        user's solver (all lines included, some tagged)
+    parameter_strings : {list}
+        list containing strings of source code to insert at each
+        corresponding tag point
+    ---Outputs---
+    running_lines : {list}
+        list of lines corresponding to a version of user's
+            solver with arguments specified by parameter_strings 
+    """
+
     running_lines = [0]*len(tagged_lines)
     num_tags_found = 0
     tag_string_cur = f'mgtune_tag_{num_tags_found}'
@@ -94,10 +106,54 @@ def iterate_to_running_solver(x,obj_dir):
                 #can't split on current tag (since it's not in line)
                 found_all_tags_in_line = True 
                 running_lines[i_line] = cur_line
+    return running_lines
 
-    #write lines of source code corresponding to
-    #version of user's file with current options specified
-    #by NOMAD
+
+def iterate_to_running_solver(x,obj_dir):
+    """
+    takes the current NOMAD iterate (a vector of numbers largely
+    corresponding to option value indices) and uses them to
+    ---Inputs---
+    x : {list}
+        current NOMAD iterate, made of integers and floats
+    obj_dir : {path or string}
+        directory which houses the NOMAD objective function
+        likely something like .../user_running_dir/mgtune_working/
+    ---Outputs---
+    NONE, writes a file
+    """
+
+    #absolute paths of hardcoded files with relevant information
+    #these variables should match those in mgtune.ttune.tune
+    #limitations of NOMAD IO make it difficult to get around
+    #    such hardcoding
+    types_file = obj_dir + '/param_types.txt'
+    options_file = obj_dir + '/options.p'
+    tagged_solver_file = obj_dir + '/tagged_solver.py'
+    running_solver_file = obj_dir + '/running_solver.py'
+
+    #extract data type of each option from file
+    with open(types_file,'r') as f:
+        line = f.readlines()[0] #only one line file
+    type_list = line.split()
+
+    #get possible options
+    options_list = pickle.load(open(options_file,'rb'))
+    #options_list is a list of two element lists
+    #options_list[i][0] is the parameter's name
+    #options_list[i][1] is a list of its possible values (or  bounds if the
+    #variable is a float, etc.)
+
+    #get lines of tagged version of user's solver
+    with open(tagged_solver_file) as f:
+        tagged_lines = f.readlines()
+
+    #get source code snippets corresponding to each entry of iterate
+    parameter_strings = get_parameter_strings(x,options_list,type_list,obj_dir) 
+
+    running_lines = overwrite_tags_with_parameters(tagged_lines,parameter_strings)
+
+    #write running solver
     with open(running_solver_file,'w') as f:
         f.writelines(running_lines)
     
