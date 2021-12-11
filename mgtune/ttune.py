@@ -11,7 +11,7 @@ from . import optinterface
 
 
 def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
-         max_f_eval=1000,disp_level=2):
+         n_trials=1,max_f_eval=1000,disp_level=2):
     """
     tunes the solver defined in user_solver_file for the problem(s)
     defined by (A_list, b_list)
@@ -37,7 +37,10 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
             run with a limited or expanded set of possible parameters)
     optimal_solver_file : {string or path}
         location to save source code of optimal solver configuration
-    max_it : {integer}
+    n_trial : {integer}
+        number of times to evaluate each iterate in objective function (since
+            timing can have errors)
+    max_f_eval : {integer}
         maximum number of function evaluations for optimizer
     disp_level {integer}
         detail level of NOMAD's terminal output, in [0,3] inclusive
@@ -45,20 +48,21 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
     optimal_solver_file : {path}
         path to an optimized version of solver at location user_solver_file 
     """
-    #set up path for runtime files
+    #set up path for user side files
     user_solver_dir = '/'.join(user_solver_file.split('/')[:-1])
-    working_dir_name = 'mgtune_working'
-    working_dir = user_solver_dir + '/' + working_dir_name
     if (optimal_solver_file is None):
         optimal_solver_file = user_solver_dir + '/optimal_solver.py'
 
     #names of internal mgtune files
+    working_dir_name = 'mgtune_working'
+    working_dir = user_solver_dir + '/' + working_dir_name
     tagged_solver_file = working_dir + '/tagged_solver.py'
     running_solver_file = working_dir + '/running_solver.py'
     types_file = working_dir + '/param_types.txt'
     lower_bounds_file = working_dir + '/param_lower_bounds.txt'
     upper_bounds_file = working_dir + '/param_upper_bounds.txt'
     options_file = working_dir + '/options.p' #pickle of parameter options
+    n_trials_file = working_dir + '/n_trials.p' #pickle of n_trials
     A_list_file = working_dir + '/A_list.p' #pickle file of A_list
     b_list_file = working_dir + '/b_list.p' #pickle file of b_list
 
@@ -67,7 +71,7 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
     #NOMAD files
     params_file = working_dir + '/params.txt' #NOMAD solver options etc.
     obj_file_name = 'obj.py'
-    obj_file = working_dir + '/obj.py' #NOMAD's black box objective function
+    obj_file = working_dir + '/' + obj_file_name #NOMAD's black box objective function
 
     #create directory in which to keep data/running/working files
     try: 
@@ -84,24 +88,32 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
     options_list = parsing.tag_file(user_solver_file,tagged_solver_file,wfdl)
 
     #write parameter types (int, real, etc.) to files
-    optinterface.write_types_and_bounds(options_list,types_file,
-                                        lower_bounds_file,upper_bounds_file)
+    t_list,lb_list,ub_list = optinterface.get_types_and_bounds(options_list)
+    types_list = t_list #rename for clarity (above line was too long)
+    lower_bounds_list = lb_list 
+    upper_bounds_list = ub_list
 
-    #create pickle of: options_list, A_list, and b_list
+    #create pickle of: (options,types,lower_bounds,upper_bounds)_list, n_trials
     pickle.dump(options_list,open(options_file,'wb'))
+    pickle.dump(types_list,open(types_file,'wb'))
+    pickle.dump(lower_bounds_list,open(lower_bounds_file,'wb'))
+    pickle.dump(upper_bounds_list,open(upper_bounds_file,'wb'))
+    pickle.dump(n_trials,open(n_trials_file,'wb'))
+
+    #create picke of: A_list, b_list
     pickle.dump(b_list,open(b_list_file,'wb'))
     pickle.dump(A_list,open(A_list_file,'wb'))
     
-    #create params file (for NOMAD)
-    optinterface.write_params_file(params_file,obj_file,types_file,
-                                   lower_bounds_file,upper_bounds_file,
-                                   max_f_eval)
-
     #copy prewritten objective function into working/running directory so NOMAD can find it
     print(mgtune_dir+'obj.py')
     shutil.copy(mgtune_dir+'/obj.py',working_dir)
 
-    #convert params file into a single list of strings, each element sets and option
+    #create human readable params file (for NOMAD)
+    optinterface.write_params_file(params_file,types_file,
+                                   lower_bounds_file,upper_bounds_file,
+                                   obj_file,max_f_eval)
+
+    #convert readable params file into a list of strings, each element sets an option
     nomad_params_list = optinterface.params_file_to_list(params_file)
 
     #call NOMAD with params

@@ -2,20 +2,23 @@
 import pickle
 
 
-def write_params_file(params_file,obj_file,type_file,lower_file,upper_file,max_f_eval):
+def write_params_file(params_file,type_file,lower_file,upper_file,obj_file,max_f_eval):
     """
     assembles known problem info and settings for NOMAD
     into a plain text file 
+    ---Inputs---
+    ---Outputs---
     """
 
-    with open(type_file,'r') as f:
-        type_string = f.readlines()[0] #file only has one line
+    #get data from pickles
+    type_list = pickle.load(open(type_file,'rb'))
+    lower_bound_list = pickle.load(open(lower_file,'rb'))
+    upper_bound_list = pickle.load(open(upper_file,'rb'))
 
-    with open(lower_file,'r') as f:
-        lower_bound_string = f.readlines()[0] #file only has one line
-
-    with open(upper_file,'r') as f:
-        upper_bound_string = f.readlines()[0] #file only has one line
+    #convert to single string
+    type_string = ' '.join(type_list)
+    lower_bound_string = ' '.join(lower_bound_list)
+    upper_bound_string = ' '.join(upper_bound_list)
 
     dimension = len(type_string.split()) #number of decision variables
 
@@ -127,15 +130,11 @@ def iterate_to_running_solver(x,obj_dir):
     #these variables should match those in mgtune.ttune.tune
     #limitations of NOMAD IO make it difficult to get around
     #    such hardcoding
-    types_file = obj_dir + '/param_types.txt'
     options_file = obj_dir + '/options.p'
+    types_file = obj_dir + '/param_types.txt'
     tagged_solver_file = obj_dir + '/tagged_solver.py'
     running_solver_file = obj_dir + '/running_solver.py'
 
-    #extract data type of each option from file
-    with open(types_file,'r') as f:
-        line = f.readlines()[0] #only one line file
-    type_list = line.split()
 
     #get possible options
     options_list = pickle.load(open(options_file,'rb'))
@@ -144,6 +143,9 @@ def iterate_to_running_solver(x,obj_dir):
     #options_list[i][1] is a list of its possible values (or  bounds if the
     #variable is a float, etc.)
 
+    #extract data type of each option from file
+    type_list = pickle.load(open(types_file,'rb'))
+
     #get lines of tagged version of user's solver
     with open(tagged_solver_file) as f:
         tagged_lines = f.readlines()
@@ -151,6 +153,7 @@ def iterate_to_running_solver(x,obj_dir):
     #get source code snippets corresponding to each entry of iterate
     parameter_strings = get_parameter_strings(x,options_list,type_list,obj_dir) 
 
+    #replace tags in source code with respective parameters
     running_lines = overwrite_tags_with_parameters(tagged_lines,parameter_strings)
 
     #write running solver
@@ -160,14 +163,15 @@ def iterate_to_running_solver(x,obj_dir):
 
 def params_file_to_list(params_file):
     #reads a file setting up NOMAD optimization problem
-    #and converts to list
+    #and converts to list, each elements of which sets
+    #one option
     with open(params_file,'r') as f:
         lines = f.readlines()
     params = [line.strip() for line in lines if not line.isspace()] 
     return params
     
 
-def write_types_and_bounds(parameter_options_list,type_file,lower_file,upper_file):
+def get_types_and_bounds(parameter_options_list):
     """
     ---Inputs---
     parameter_options_list : {list}
@@ -177,14 +181,16 @@ def write_types_and_bounds(parameter_options_list,type_file,lower_file,upper_fil
             given by string
         len(parameter_options_list[i]) = 2
         parameter_options_list[i] = [ith option name, ith argument options (or keywords)]
-    type_file : {path or string}
-        file where parameter types (int, real, etc.) will be written
-    lower_file : {path or string}
-        file where lower bounds will be written
-    upper_file : {path or string}
-        file where upper bounds will be written
     ---Outputs---
-    NONE, writes to three files
+    types_list : {list}
+        list of "types" for each of the decision variables
+        I -> integer
+        R -> real (float)
+        B -> binary
+    lower_bounds_list : {list}
+        lower bounds for each of the decision variables, numerics plus -inf, +inf
+    upper_bounds_list : {list}
+        upper bounds for each of the decision variables, numerics plus -inf, +inf
     """
     n_params = len(parameter_options_list) #get number of free parameters
     types_list = [0]*n_params
@@ -206,14 +212,4 @@ def write_types_and_bounds(parameter_options_list,type_file,lower_file,upper_fil
     lower_bounds_list = [str(elem) for elem in lower_bounds_list]
     upper_bounds_list = [str(elem) for elem in upper_bounds_list]
 
-    types_line = ' '.join(types_list)
-    with open(type_file,'w') as f:
-        f.writelines([types_line])
-
-    lower_bounds_line = ' '.join(lower_bounds_list)
-    with open(lower_file,'w') as f:
-        f.writelines([lower_bounds_line])
-
-    upper_bounds_line = ' '.join(upper_bounds_list)
-    with open(upper_file,'w') as f:
-        f.writelines([upper_bounds_line])
+    return types_list, lower_bounds_list, upper_bounds_list
