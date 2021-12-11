@@ -21,12 +21,11 @@ def obj():
     x_strings = line.split()
     x = [int(elem) for elem in x_strings]
 
-
     #use current NOMAD iterate to write a new solver to be evaluated
     mgtune.optinterface.iterate_to_running_solver(x,obj_dir)
 
     #import newly written solver
-    import running_solver #need to make sure not cached so changes take effect
+    import running_solver
 
     #get linear systems from pickle
     A_list = pickle.load(open(obj_dir+'/A_list.p','rb'))

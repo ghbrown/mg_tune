@@ -11,4 +11,8 @@ sandbox:
 
 ex1:
 	@python3 examples/example_1/driver.py
-	@cat examples/example_1/optimal_solver.py
+	@cat examples/example_1/tuned_solver.py
+
+ex2:
+	@python3 examples/example_2/driver.py
+	@cat examples/example_2/optimal_solver.py

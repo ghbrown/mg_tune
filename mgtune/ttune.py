@@ -10,7 +10,7 @@ from . import parsing
 from . import optinterface
 
 
-def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
+def tune(user_solver_file,A_list,b_list,optimal_solver_file,wfdl=None,
          n_trials=1,max_f_eval=1000,disp_level=2):
     """
     tunes the solver defined in user_solver_file for the problem(s)
@@ -35,8 +35,6 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
         defines the free parameters of a function and its possible values
         (this allows a user who knows what they are doing to set up a custom
             run with a limited or expanded set of possible parameters)
-    optimal_solver_file : {string or path}
-        location to save source code of optimal solver configuration
     n_trial : {integer}
         number of times to evaluate each iterate in objective function (since
             timing can have errors)
@@ -50,8 +48,6 @@ def tune(user_solver_file,A_list,b_list,wfdl=None,optimal_solver_file=None,
     """
     #set up path for user side files
     user_solver_dir = '/'.join(user_solver_file.split('/')[:-1])
-    if (optimal_solver_file is None):
-        optimal_solver_file = user_solver_dir + '/optimal_solver.py'
 
     #names of internal mgtune files
     working_dir_name = 'mgtune_working'
