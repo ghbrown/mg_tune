@@ -41,8 +41,4 @@ mgtune.tune(solver_path,A_list,b_list,tuned_solver_path,
             wfdl=reduced_function_dictionary_list,
             n_trials=40,max_f_eval=100,disp_level=3)
 
-#run timing on original solver versus tuned solver
-#mgtune.compare(solver_path,tuned_solver_path,A_list,b_list)
-
-
 
