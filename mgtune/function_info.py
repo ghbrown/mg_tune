@@ -47,8 +47,9 @@ sa_dict = {
     #need to accomomodate stuff like smooth = ('jacobi',{'theta':0.25})
     "presmoother" : ['\'jacobi\'','\'gauss_seidel\'','\'richardson\'','\'sor\''],
     "postsmoother" : ['\'jacobi\'','\'gauss_seidel\'','\'richardson\'','\'sor\''],
-    #not exactly sure what options are for above two arguments
     "improve_candidates" : 'untunable',
+    #TODO: this IS very tunable
+    #it should really be set to a list of smoothers or something similar
     "max_coarse" : [str(elem) for elem in [2,4,8,16,32,64]],
     "max_levels" : 'untunable', #more effective to tune max_coarse only, as
     #setting max_levels too low results in extremely long solve times

@@ -9,6 +9,6 @@ def solve(A,b):
     #large on the coarsest level
     #therefore fix it to be large so depth of hierarchy is
     #controlled by max_coarse alone
-    ml = pyamg.aggregation.smoothed_aggregation_solver(A,max_levels=1000, strength='evolution', aggregate='lloyd', smooth='richardson', presmoother='richardson', postsmoother='sor', max_coarse=2)
-    x = ml.solve(b,tol=1e-6, cycle='F', accel='bicgstab')
+    ml = pyamg.aggregation.smoothed_aggregation_solver(A,max_levels=1000, strength='classical', aggregate='standard', smooth='energy', presmoother='richardson', postsmoother='sor', max_coarse=16)
+    x = ml.solve(b,tol=1e-6, cycle='F', accel='cgne')
     return x

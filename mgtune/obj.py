@@ -8,9 +8,18 @@ import mgtune
 from mgtune import optinterface
 
 def obj():
-    #mgtune objective functions
-    #returns the time taken to solve all linear systems
-    #with the current iterate of the solver
+    """
+    generic NOMAD objective function
+    returns the time taken to solve all linear systems
+    with the current iterate of the solver
+    ---Inputs---
+    NONE, formally, but many variables are read from
+        local pickles
+    ---Outputs---
+    NONE, formally, but any print statement in this function
+        or a function called by this function is taken as the
+        output
+    """
 
     obj_dir = str(Path(__file__).parent) #directory containing objective function
 

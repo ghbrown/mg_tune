@@ -12,6 +12,8 @@ and multilevel solver for Poisson problem
 NOTES: this takes about 20 minutes to run and does not typically
        produce a faster solver, primarily because the default
        PyAMG solver is well optimized for Laplace like problems
+       and the current optimization approach is suspceptible to
+       noise
 """
 
 #printout of tunable functions

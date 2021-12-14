@@ -6,6 +6,17 @@ import pyamg.gallery
 
 import mgtune
 
+"""
+Tune (nearly) all parameters of PyAMG's smoothed aggregation
+and multilevel solver for a variety of systems
+NOTES: this takes about and hour to run and does not typically
+       produce a faster solver, primarily because the current
+       optimization approach is suboptimal and should be replaced
+       with another backend solver like randomized A/B testing
+       coordinate descent which assumes only first order
+       interactions between parameters and is greedy
+"""
+
 #printout of tunable functions
 mgtune.tunable()
 
