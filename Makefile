@@ -15,4 +15,4 @@ ex1:
 
 ex2:
 	@python3 examples/example_2/driver.py
-	@cat examples/example_2/optimal_solver.py
+	@cat examples/example_2/tuned_solver.py

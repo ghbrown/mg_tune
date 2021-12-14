@@ -5,9 +5,14 @@ import pyamg
 import pyamg.gallery
 
 import mgtune
-from mgtune import parsing
-from mgtune import function_info
 
+"""
+Tune (nearly) all parameters of PyAMG's smoothed aggregation
+and multilevel solver for Poisson problem
+NOTES: this takes about 20 minutes to run and does not typically
+       produce a faster solver, primarily because the default
+       PyAMG solver is well optimized for Laplace like problems
+"""
 
 #printout of tunable functions
 mgtune.tunable()
@@ -24,10 +29,15 @@ b_list = [b]
 #relative paths work if you run python adjacent to driver script
 cur_dir = str(Path(__file__).parent)
 solver_path = cur_dir + '/sa_solver.py'
-tagged_solver_path = cur_dir + '/sa_solver_tagged.py'
+tuned_solver_path = cur_dir + '/tuned_solver.py'
 
-#tune solver at location solver_path
-mgtune.tune(solver_path,A_list,b_list,n_trials=3,max_f_eval=50,disp_level=3)
+#tune solver
+mgtune.tune(solver_path,A_list,b_list,tuned_solver_path,
+            n_trials=40,max_f_eval=500,disp_level=3)
+
+#compare slow and tuned solvers on training set
+solver_list = [solver_path,tuned_solver_path]
+mgtune.compare(solver_list,A_list,b_list,n_trials=100)
 
 
 

@@ -11,7 +11,7 @@ def function_dict_list():
     fdl : {list}
         function dictionary list, a list of dictionaries, each of which defines the free parameters of a function and its possible values
     """
-    fdl = [sa_dict] #[f]unction [d]ictionary [l]ist
+    fdl = [sa_dict,solve_dict] #[f]unction [d]ictionary [l]ist
     return copy.deepcopy(fdl)
 
 
@@ -49,14 +49,23 @@ sa_dict = {
     "postsmoother" : ['\'jacobi\'','\'gauss_seidel\'','\'richardson\'','\'sor\''],
     #not exactly sure what options are for above two arguments
     "improve_candidates" : 'untunable',
-    "max_coarse" : [str(elem) for elem in [33,25,20,17,13,9,5,3]],
-    #having as actual integer could be disaster at high end
-    #perhaps change from these values to range(2,51) if speed allows
-    "max_levels" : [str(elem) for elem in range(2,16)], #number of levels, realistically not above 15
-    #"cycle_type" : ['\'V\'','\'W\'','\'F\''], 
-    #"coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
-    #TODO: above two commented out because they are not optional arguments
+    "max_coarse" : [str(elem) for elem in [2,4,8,16,32,64]],
+    "max_levels" : 'untunable', #more effective to tune max_coarse only, as
+    #setting max_levels too low results in extremely long solve times
     "keep" : 'untunable',
+    }
+
+#TODO: not sure which function takes the coarse_solver option
+#"coarse_solver" : ['\'splu\'','\'lu\'','\'cholesky\'','\'pinv\'','\'gauss_seidel\''],
+
+solve_dict = {
+    "function_name" : 'ml.solve',
+    "x0" : 'untunable',
+    "maxiter" : 'untunable',
+    "cycle" : ['\'V\'','\'W\'','\'F\''], 
+    "accel" : ['None','\'bicgstab\'','\'cgne\'','\'cgnr\'','\'fgmres\'','\'gmres\''], 
+    #TODO: cannot currently use all accel options, since some require SPD
+    # currently generating SPD warnings: '\'cg\'', 
     }
 
 """

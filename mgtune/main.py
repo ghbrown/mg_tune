@@ -1,8 +1,10 @@
 
+import sys
 import os
 import shutil
 from pathlib import Path
 import pickle
+import time
 import numpy as np
 import PyNomad as pynomad
 from . import function_info
@@ -70,10 +72,8 @@ def tune(user_solver_file,A_list,b_list,optimal_solver_file,wfdl=None,
     obj_file = working_dir + '/' + obj_file_name #NOMAD's black box objective function
 
     #create directory in which to keep data/running/working files
-    try: 
+    if (not os.path.exists(working_dir)):
         os.mkdir(working_dir)
-    except:
-        pass #no need to create directory if it exists
 
     #get info about all functions mgtune can configure and their options
     #either from user input, or from mgtune's internal "database"
@@ -123,6 +123,69 @@ def tune(user_solver_file,A_list,b_list,optimal_solver_file,wfdl=None,
         shutil.rmtree(working_dir)
 
     return  optimal_solver_file
+
+
+def compare(solver_path_list,A_list,b_list,n_trials=1):
+    """
+    compare speed of multiple solvers
+    ---Inputs---
+    solver_path_list : {list}
+        list of paths to solver modules
+        modules must end in ".py" and contain a function called
+            solver(A,b)
+    A_list : {list}
+        list of matrices whose solution is desired
+    b_list : {list}
+        corresponding list of right hand sides for linear systems
+    n_trial : {integer}
+        number of times to evaluate each iterate in objective function (since
+            timing can have errors)
+    ---Outputs---
+    t_vec : {numpy array}
+        one dimensional array of length equal to solver_path_list, each entry
+            corresponding to the respective average solve time
+    NONE, outputs go to to the terminal
+    """
+    t_vec = np.empty(len(solver_path_list))
+    print('')
+    print('-------------------------------------------')
+    print('SOLVER TIMING COMPARISON')
+    print('-------------------------------------------')
+    print(f'SOLVER NAME'+ ''.join([' ']*10) + 'TIME [s]')
+    for i_s,solver_path in enumerate(solver_path_list):
+        #get relevant path and file information
+        solver_dir = '/'.join(solver_path.split('/')[:-1])
+        module_file_name = solver_path.split('/')[-1]
+        module_name = module_file_name.split('.py')[0]
+
+        #import solver
+        cur_solver_module = __import__(module_name)
+
+        #apply solver to linear systems and time
+        t = 0
+        for A,b in zip(A_list,b_list):
+            t_cur_system = 0 #accumulator for current system
+            for trial in range(n_trials):
+                t_0 = time.perf_counter()
+                cur_solver_module.solve(A,b)
+                t_1 = time.perf_counter()
+                t_cur_system += (t_1 - t_0)
+            t += t_cur_system/n_trials #accumulate average time from current system
+        t_vec[i_s] = t #set corresponding time in output vector
+
+        #current solver module no longer needed
+        try:
+            del sys.modules[module_name]
+        except (AttributeError):
+            pass
+
+        #terminal output
+        print(f'{module_name:<20} {t}')
+    print('-------------------------------------------\n')
+    return t_vec
+
+        
+    
 
 
     
