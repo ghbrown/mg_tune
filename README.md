@@ -97,5 +97,11 @@ Setup:
 - obtain `mgtune` (suggested to enter project directory and `pip install -e .`, since pip package not yet completed)
 
 
+### Current status and to do
+
+- current code is likely bug-free, but does not offer usable functionality for actual autotuning
+- rather than using NOMAD as the optimization/solver backend, one should look into an alternative (specifically (randomized) coordinate gradient descent with A/B testing of current best config and proposed config, or another standard method for autotuning on integer/discrete variables)
+
+
 
 
